@@ -15,7 +15,6 @@ import {
 
 const UserItem = () => {
   const { user } = useUser();
-  console.log("user", user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
