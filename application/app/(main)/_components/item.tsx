@@ -1,31 +1,22 @@
 "use client";
 
 import {
-  ChevronDown,
-  ChevronRight,
-  ChevronsUp,
-  LucideIcon,
-  MoreHorizontal,
-  Plus,
-  PlusIcon,
-  Trash,
-} from "lucide-react";
-import { toast } from "sonner";
-import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/dist/client/components/navigation";
-import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
+import { useMutation } from "convex/react";
+import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash, } from "lucide-react";
+import { useRouter } from "next/dist/client/components/navigation";
+import React from "react";
+import { toast } from "sonner";
 
 interface ItemProps {
   id?: Id<"documents">;
@@ -39,7 +30,7 @@ interface ItemProps {
   icon: LucideIcon;
 
   onExpand?: () => void;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const Item = ({
@@ -57,6 +48,19 @@ const Item = ({
   const router = useRouter();
   const { user } = useUser();
   const create = useMutation(api.documents.create);
+  const archive = useMutation(api.documents.archive);
+
+  const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    if (!id) return;
+    const promise = archive({ id });
+    toast.promise(promise, {
+      loading: "Moving to trash...",
+      success: "Not move to trash!",
+      error: "Some error with trash.",
+    });
+  };
+
   const handleExpand = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
@@ -72,7 +76,7 @@ const Item = ({
         if (!expanded) {
           onExpand?.();
         }
-        router.push(`/documents/${documentId}`);
+        // router.push(`/documents/${documentId}`);
       },
     );
 
@@ -100,7 +104,7 @@ const Item = ({
       {!!id && (
         <div
           role="button"
-          className="h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1"
+          className="h-full rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 mr-1"
           onClick={handleExpand}
         >
           <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
@@ -134,7 +138,7 @@ const Item = ({
               side="right"
               forceMount
             >
-              <DropdownMenuItem onClick={() => {}}>
+              <DropdownMenuItem onClick={onArchive}>
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
               </DropdownMenuItem>
