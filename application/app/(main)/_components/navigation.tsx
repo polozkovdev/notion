@@ -8,11 +8,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {api} from "@/convex/_generated/api";
-import {useSearch} from "@/hooks/use-search";
-import {useSettings} from "@/hooks/use-settings";
-import {cn} from "@/lib/utils";
-import {useMutation} from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useSearch } from "@/hooks/use-search";
+import { useSettings } from "@/hooks/use-settings";
+import { cn } from "@/lib/utils";
+import { useMutation } from "convex/react";
 import {
   ChevronsLeft,
   MenuIcon,
@@ -22,12 +22,12 @@ import {
   Settings,
   Trash,
 } from "lucide-react";
-import {usePathname} from "next/dist/client/components/navigation";
-import {useParams} from "next/navigation";
-import React, {ElementRef, useEffect, useRef, useState} from "react";
-import {toast} from "sonner";
-import {useMediaQuery} from "usehooks-ts";
-import {DocumentList} from "./document-list";
+import { usePathname } from "next/dist/client/components/navigation";
+import { useParams } from "next/navigation";
+import React, { ElementRef, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
+import { DocumentList } from "./document-list";
 import Navbar from "./navbar";
 
 const Navigation = () => {
@@ -106,7 +106,7 @@ const Navigation = () => {
   };
 
   const handleCreate = () => {
-    const promise = create({title: "Untitled"});
+    const promise = create({ title: "Untitled" });
 
     toast.promise(promise, {
       loading: "Creating a new note...",
@@ -128,7 +128,6 @@ const Navigation = () => {
       collapse();
     }
   }, [pathname, isMobile]);
-
   return (
     <>
       <aside
@@ -147,26 +146,26 @@ const Navigation = () => {
             isMobile && "opacity-100",
           )}
         >
-          <ChevronsLeft className="h-6 w-6"/>
+          <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <UserItem/>
-          <Item label="Search" icon={Search} isSearch onClick={search.onOpen}/>
-          <Item label="Settings" icon={Settings} onClick={settings.onOpen}/>
-          <Item onClick={handleCreate} label="New page" icon={PlusCircle}/>
+          <UserItem />
+          <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
+          <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
+          <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">
-          <DocumentList/>
-          <Item label="Add page" icon={Plus} onClick={handleCreate}/>
+          <DocumentList />
+          <Item label="Add page" icon={Plus} onClick={handleCreate} />
           <Popover>
             <PopoverTrigger className="w-full mt-4">
-              <Item label="Trash" icon={Trash}/>
+              <Item label="Trash" icon={Trash} />
             </PopoverTrigger>
             <PopoverContent
               side={isMobile ? "bottom" : "right"}
               className="p-0 w-72"
             >
-              <TrashBox/>
+              <TrashBox />
             </PopoverContent>
           </Popover>
         </div>
@@ -184,18 +183,20 @@ const Navigation = () => {
           isMobile && "left-0 w-full",
         )}
       >
-        {!!params.parentDocumentId ? (
-          <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth}/>
-        ) : <nav className="bg-transparent px-3 py-2 w-full">
-          {isCollapsed && (
-            <div className="cursor-pointer hover:bg-neutral-300 dark:bg-neutral-600 rounded-sm transition inline-flex">
-              <MenuIcon
-                onClick={resetWidth}
-                className="h-6 w-6 text-muted-foreground"
-              />
-            </div>
-          )}
-        </nav>}
+        {!!params.documentId ? (
+          <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
+        ) : (
+          <nav className="bg-transparent px-3 py-2 w-full">
+            {isCollapsed && (
+              <div className="cursor-pointer hover:bg-neutral-300 dark:bg-neutral-600 rounded-sm transition inline-flex">
+                <MenuIcon
+                  onClick={resetWidth}
+                  className="h-6 w-6 text-muted-foreground"
+                />
+              </div>
+            )}
+          </nav>
+        )}
       </div>
     </>
   );
