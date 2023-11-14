@@ -4,6 +4,7 @@ import IconPicker from "@/app/(main)/_components/icon-picker";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useCoverImage } from "@/hooks/use-cover-image";
 import { useMutation } from "convex/react";
 import { ImageIcon, Smile, X } from "lucide-react";
 import { ElementRef, useRef, useState } from "react";
@@ -18,6 +19,8 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
+
+  const coverImage = useCoverImage();
 
   const update = useMutation(api.documents.update);
   const removeIcon = useMutation(api.documents.removeIcon);
@@ -62,17 +65,17 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   return (
     <div className="pl-[54px] group relative">
       {!!initialData.icon && !preview && (
-        <div className="flex items-center gap-x-2 group/icon-pt-6">
+        <div className="flex items-center gap-x-2 group/icon pt-6">
           <IconPicker onChange={onIconSelect}>
             <p className="text-6xl hover:opacity-75 transition">
-              {initialData?.icon}
+              {initialData.icon}
             </p>
           </IconPicker>
           <Button
-            size="icon"
-            variant="outline"
             onClick={onIconRemove}
             className="rounded-full opacity-0 group-hover/icon:opacity-100 transition text-muted-foreground text-xs"
+            variant="outline"
+            size="icon"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -85,9 +88,9 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         {!initialData.icon && !preview && (
           <IconPicker asChild onChange={onIconSelect}>
             <Button
-              size="sm"
-              variant="outline"
               className="text-muted-foreground text-xs"
+              variant="outline"
+              size="sm"
             >
               <Smile className="h-4 w-4 mr-2" />
               Add icon
@@ -96,9 +99,10 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         )}
         {!initialData.coverImage && !preview && (
           <Button
-            size="sm"
-            variant="outline"
+            onClick={coverImage.onOpen}
             className="text-muted-foreground text-xs"
+            variant="outline"
+            size="sm"
           >
             <ImageIcon className="h-4 w-4 mr-2" />
             Add cover
@@ -111,7 +115,7 @@ const Toolbar = ({ initialData, preview }: ToolbarProps) => {
           onBlur={disabledInput}
           onKeyDown={onKeyDown}
           value={value}
-          onChange={(event) => onInput(event.target.value)}
+          onChange={(e) => onInput(e.target.value)}
           className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none"
         />
       ) : (
