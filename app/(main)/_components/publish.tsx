@@ -1,26 +1,30 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
-import useOrigin from "@/hooks/use-origin";
-import { useMutation } from "convex/react";
-import { CheckIcon, Copy, Globe } from "lucide-react";
 import { useState } from "react";
+import { useMutation } from "convex/react";
 import { toast } from "sonner";
+import { Check, Copy, Globe } from "lucide-react";
+
+import { Doc } from "@/convex/_generated/dataModel";
+import {
+  PopoverTrigger,
+  Popover,
+  PopoverContent
+} from "@/components/ui/popover"
+import { useOrigin } from "@/hooks/use-origin";
+import { api } from "@/convex/_generated/api";
+import { Button } from "@/components/ui/button";
 
 interface PublishProps {
-  initialData: Doc<"documents">;
-}
+  initialData: Doc<"documents">
+};
 
-const Publish = ({ initialData }: PublishProps) => {
+export const Publish = ({
+  initialData
+}: PublishProps) => {
   const origin = useOrigin();
   const update = useMutation(api.documents.update);
+
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,29 +32,33 @@ const Publish = ({ initialData }: PublishProps) => {
 
   const onPublish = () => {
     setIsSubmitting(true);
+
     const promise = update({
       id: initialData._id,
       isPublished: true,
-    }).finally(() => setIsSubmitting(false));
+    })
+      .finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
       loading: "Publishing...",
-      success: "Note Published!",
-      error: "Failed to publish  note.",
+      success: "Note published",
+      error: "Failed to publish note.",
     });
   };
 
-  const onUnPublish = () => {
+  const onUnpublish = () => {
     setIsSubmitting(true);
+
     const promise = update({
       id: initialData._id,
       isPublished: false,
-    }).finally(() => setIsSubmitting(false));
+    })
+      .finally(() => setIsSubmitting(false));
 
     toast.promise(promise, {
       loading: "Unpublishing...",
-      success: "Note Unpublished!",
-      error: "Failed to unpublish  note.",
+      success: "Note unpublished",
+      error: "Failed to unpublish note.",
     });
   };
 
@@ -61,19 +69,26 @@ const Publish = ({ initialData }: PublishProps) => {
     setTimeout(() => {
       setCopied(false);
     }, 1000);
-  };
+  }
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button size="sm" variant="ghost">
-          Publish
+          Publish 
           {initialData.isPublished && (
-            <Globe className="text-sky-500 w-4 h-4 ml-2" />
+            <Globe
+              className="text-sky-500 w-4 h-4 ml-2"
+            />
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72" align="end" alignOffset={8} forceMount>
+      <PopoverContent 
+        className="w-72" 
+        align="end"
+        alignOffset={8}
+        forceMount
+      >
         {initialData.isPublished ? (
           <div className="space-y-4">
             <div className="flex items-center gap-x-2">
@@ -83,10 +98,10 @@ const Publish = ({ initialData }: PublishProps) => {
               </p>
             </div>
             <div className="flex items-center">
-              <input
-                disabled
-                value={url}
+              <input 
                 className="flex-1 px-2 text-xs border rounded-l-md h-8 bg-muted truncate"
+                value={url}
+                disabled
               />
               <Button
                 onClick={onCopy}
@@ -94,9 +109,9 @@ const Publish = ({ initialData }: PublishProps) => {
                 className="h-8 rounded-l-none"
               >
                 {copied ? (
-                  <CheckIcon className="w-4 h-4" />
+                  <Check className="h-4 w-4" />
                 ) : (
-                  <Copy className="w-4 h-4" />
+                  <Copy className="h-4 w-4" />
                 )}
               </Button>
             </div>
@@ -104,15 +119,19 @@ const Publish = ({ initialData }: PublishProps) => {
               size="sm"
               className="w-full text-xs"
               disabled={isSubmitting}
-              onClick={onUnPublish}
+              onClick={onUnpublish}
             >
               Unpublish
             </Button>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center">
-            <Globe className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium mb-2">Publish this note</p>
+            <Globe
+              className="h-8 w-8 text-muted-foreground mb-2"
+            />
+            <p className="text-sm font-medium mb-2">
+              Publish this note
+            </p>
             <span className="text-xs text-muted-foreground mb-4">
               Share your work with others.
             </span>
@@ -128,7 +147,5 @@ const Publish = ({ initialData }: PublishProps) => {
         )}
       </PopoverContent>
     </Popover>
-  );
-};
-
-export default Publish;
+  )
+}

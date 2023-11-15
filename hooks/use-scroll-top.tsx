@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-const useScrollTop = (threshold = 10) => {
+export const useScrollTop = (threshold = 10) => {
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > threshold) {
@@ -14,7 +15,6 @@ const useScrollTop = (threshold = 10) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [threshold]);
-  return scrolled;
-};
 
-export default useScrollTop;
+  return scrolled;
+}

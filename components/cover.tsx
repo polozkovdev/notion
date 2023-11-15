@@ -1,53 +1,56 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { ImageIcon, X } from "lucide-react";
+import { useMutation } from "convex/react";
+import { useParams } from "next/navigation";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useCoverImage } from "@/hooks/use-cover-image";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useCoverImage } from "@/hooks/use-cover-image";
 import { useEdgeStore } from "@/lib/edgestore";
-import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { ImageIcon, X } from "lucide-react";
-import Image from "next/image";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
 
-interface CoverProps {
+interface CoverImageProps {
   url?: string;
   preview?: boolean;
 }
 
-export const Cover = ({ url, preview }: CoverProps) => {
+export const Cover = ({
+  url,
+  preview,
+}: CoverImageProps) => {
+  const { edgestore } = useEdgeStore();
   const params = useParams();
   const coverImage = useCoverImage();
-  const { edgestore } = useEdgeStore();
   const removeCoverImage = useMutation(api.documents.removeCoverImage);
 
   const onRemove = async () => {
     if (url) {
-      await edgestore.publicFiles.delete({ url });
-      const promise = removeCoverImage({
-        id: params?.documentId as Id<"documents">,
-      });
-      toast.promise(promise, {
-        loading: "Removing cover image...",
-        success: "Cover image removed!",
-        error: "Failed to remove cover image.",
-      });
+      await edgestore.publicFiles.delete({
+        url: url
+      })
     }
+    removeCoverImage({
+      id: params.documentId as Id<"documents">
+    });
   };
 
   return (
-    <div
-      className={cn(
-        "relative w-full h-[35vh] group",
-        !url && "h-[12vh]",
-        url && "bg-muted",
-      )}
-    >
+    <div className={cn(
+      "relative w-full h-[35vh] group",
+      !url && "h-[12vh]",
+      url && "bg-muted"
+    )}>
       {!!url && (
-        <Image src={url} fill className="object-cover" alt="Some image" />
+        <Image
+          src={url}
+          fill
+          alt="Cover"
+          className="object-cover"
+        />
       )}
       {url && !preview && (
         <div className="opacity-0 group-hover:opacity-100 absolute bottom-5 right-5 flex items-center gap-x-2">
@@ -72,9 +75,11 @@ export const Cover = ({ url, preview }: CoverProps) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 Cover.Skeleton = function CoverSkeleton() {
-  return <Skeleton className="w-full h-[12vh]" />;
-};
+  return (
+    <Skeleton className="w-full h-[12vh]" />
+  )
+}
